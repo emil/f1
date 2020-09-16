@@ -8,6 +8,7 @@ Modified for compatibility with PostgreSQL from https://github.com/tomredsky/f1d
 ### Setup
 
 ####  create schema/tables
+* `psql -h 0.0.0.0  -c 'create database f1'`
 * `psql -h 0.0.0.0 -d f1 -f f1db_postgres.sql`
 * `CREATE EXTENSION tablefunc`
 * follow the queries in `f1.sql`
