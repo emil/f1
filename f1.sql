@@ -69,8 +69,8 @@ where date >= date :'beginning'
 select * from rr order by date, running_points desc;
 
 ---- add running position
-  with rr AS
-  (
+with rr AS
+(
   select date, name, drivers.surname as driver, position, points,
     sum(points) over (partition by driver_id order by date) as total_points
   from races
@@ -81,10 +81,10 @@ select * from rr order by date, running_points desc;
     and date <  date :'beginning'
     + :months * interval '1 month'
     and results.position is not null
-    )
+)
 select driver, name, position, points, total_points,
   rank() over (partition by date order by total_points desc) as current_rank
-from rr where position <= 10  order by date;
+from rr order by date;
 
 -- crosstab pivot
 -- https://www.postgresql.org/docs/current/tablefunc.html
@@ -104,7 +104,7 @@ from crosstab(
     and results.position is not null
     )
   select driver::text, name::text, position::bigint
-  from rr where position <= 10
+  from rr
   order by 1, date
 $$
 ) AS ct(driver text, AU bigint, CN bigint, BAH bigint, RU bigint, ES bigint,
@@ -131,11 +131,9 @@ from crosstab(
       and results.position is not null
       )
   select driver::text, name::text, points::bigint from (
-    select driver::text, name::text, date as date, points::bigint
-    from rr where position <= 10
+    select driver::text, name::text, date as date, points::bigint from rr
     union all
-    select driver::text, 'Total' as name, null as date, sum(points::bigint) as points
-    from rr where position <= 10
+    select driver::text, 'Total' as name, null as date, sum(points::bigint) as points from rr
     group by driver
       ) t
   order by 1, date
@@ -168,11 +166,9 @@ from crosstab(
       )
   select driver::text, name::text, points::bigint
   from (
-    select driver::text, name::text, date as date, points::bigint
-    from rr where position <= 10
+    select driver::text, name::text, date as date, points::bigint from rr
     union all
-    select driver::text, 'Total' as name, null as date, sum(points::bigint) as points
-    from rr where position <= 10
+    select driver::text, 'Total' as name, null as date, sum(points::bigint) as points from rr
     group by driver
       ) t
     order by sum(points) over (partition by driver) desc, driver, date
@@ -214,11 +210,9 @@ from crosstab(
   select driver::text, name::text, points::bigint
   from (
     select driver::text, name::text, date as date,
-          sum(points) over (partition by driver order by date) as points
-    from rr where position <= 10
+          sum(points) over (partition by driver order by date) as points from rr
     union all
-    select driver::text, 'Total' as name, null as date, sum(points::bigint) as points
-    from rr where position <= 10
+    select driver::text, 'Total' as name, null as date, sum(points::bigint) as points from rr
     group by driver
       ) t
     order by sum(points) over (partition by driver) desc, driver, date
@@ -262,10 +256,10 @@ from crosstab(
   from (
     select driver::text, name::text, date as date,
           sum(points) over (partition by driver order by date) as points
-    from rr where position <= 10
+    from rr
     union all
     select driver::text, 'Total' as name, null as date, sum(points::bigint) as points
-    from rr where position <= 10
+    from rr
     group by driver
       ) t
     order by sum(points) over (partition by driver) desc, driver, date
