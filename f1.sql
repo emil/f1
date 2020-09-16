@@ -11,7 +11,7 @@
 select date, name
 from races
 where date >= date :'beginning'
-  and date <   date :'beginning'
+  and date <  date :'beginning'
   + :months * interval '1 month'
 order by date;
 
@@ -141,9 +141,7 @@ from crosstab(
     ) AS ct(driver text, AU bigint, CN bigint, BAH bigint, RU bigint, ES bigint,
             MON bigint, CA bigint, AZE bigint, AT bigint, GB bigint, HU bigint,
             BEL bigint, ITA bigint, SG bigint, MAL bigint, JP bigint, US bigint,
-            MX bigint, BR bigint, ABD bigint, Total bigint
-            );
-
+            MX bigint, BR bigint, ABD bigint, Total bigint);
 
 -- fix missing rows
 -- spell out columns
