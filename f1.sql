@@ -1,3 +1,5 @@
+-- create database
+--  psql -h 0.0.0.0 -c 'create database f1'
 --  create tables
 --  psql -h 0.0.0.0 -d f1 -f f1db_postgres.sql
 -- CREATE EXTENSION tablefunc;
